@@ -8,7 +8,7 @@ Shader "LS/BackRender" {
 		_Color("ColorOfBack", Color) = (1, 1, 1, 1)
 	}
 	SubShader {
-		Pass { 
+		Pass {
 			Tags { "LightMode"="ForwardBase" }
 			Cull front
 
