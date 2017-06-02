@@ -6,7 +6,7 @@ Shader "LS/Common/BumpedSpecular" {
 		_MainTex ("Main Tex", 2D) = "white" {}
 		_BumpMap ("Normal Map", 2D) = "bump" {}
 		_Specular ("Specular Color", Color) = (1, 1, 1, 1)
-		_Gloss ("Gloss", Range(8.0, 256)) = 20
+		_Gloss ("Gloss", Range(8.0, 500000000)) = 20
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" "Queue"="Geometry"}

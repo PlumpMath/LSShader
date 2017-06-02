@@ -2,6 +2,8 @@
 Shader "LS/GraduallyAppear" {
 	Properties {
 		_MainTex ("Main Tex", 2D) = "white" {}
+		_SecondTex("Second Tex", 2D) = "black"{}
+		_Color("SecondColor", Color) = (1, 1, 1, 1)
 		_BumpMap ("Normal Map", 2D) = "bump" {}
 
 		_Begin("begin", float) = 0
@@ -27,6 +29,9 @@ Shader "LS/GraduallyAppear" {
 			#pragma fragment frag
 			#include "Lighting.cginc"
 
+			sampler2D _SecondTex;
+			float4 _SecondTex_ST;
+			fixed4 _Color;
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			sampler2D _BumpMap;
@@ -49,6 +54,7 @@ Shader "LS/GraduallyAppear" {
 				float3 lightDir: TEXCOORD1;
 				float3 viewDir : TEXCOORD2;
 				float4 vertex : TEXCOORD3;
+				float2 se_uv : TEXCOORD4;
 			};
 			
 			v2f vert(a2v v) {
@@ -56,6 +62,7 @@ Shader "LS/GraduallyAppear" {
 				o.vertex = v.vertex;
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv.xy = v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				o.se_uv.xy = v.texcoord.xy * _SecondTex_ST.xy + _SecondTex_ST.zw;
 				
 				TANGENT_SPACE_ROTATION;
 				o.lightDir = mul(rotation, ObjSpaceLightDir(v.vertex)).xyz;
@@ -65,7 +72,8 @@ Shader "LS/GraduallyAppear" {
 			}
 			
 			fixed4 frag(v2f i) : SV_Target {
-				fixed3 albedo = tex2D(_MainTex, i.uv).rgb;
+				fixed mixed = tex2D(_SecondTex, i.se_uv).r;
+				fixed3 albedo = tex2D(_MainTex, i.uv).rgb * (1 - mixed) + mixed * _Color.rgb;
 				fixed alpha = 1;
 
 				float gd = (_End - _Begin) * _Limit + _Begin;
